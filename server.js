@@ -17,12 +17,24 @@ if (process.env.NODE_ENV === 'development') {
 async function getMongoDBURI() {
   if (process.env.NODE_ENV === 'production') {
     const secretsClient = new SecretManagerServiceClient();
-    const [version] = await secretsClient.accessSecretVersion({
-      name: 'projects/882775215945/secrets/mongodb-uri/versions/latest',
-    });
-    return version.payload.data.toString('utf8');
+
+    try {
+      const [version] = await secretsClient.accessSecretVersion({
+        name: 'projects/882775215945/secrets/mongodb-uri/versions/latest',
+      });
+      const mongoURI = version.payload.data.toString('utf8');
+      
+      // Log part of the URI for debugging (avoid logging the entire URI)
+      console.log("MongoDB URI (partial):", mongoURI.substring(0, 20) + '...');
+
+      return mongoURI;
+    } catch (error) {
+      console.error("Error fetching MongoDB URI from Secret Manager:", error.message);
+      throw error;
+    }
   } else {
     // Fallback to .env file for development
+    console.log("Using local MongoDB URI from .env");
     return process.env.MONGODB_URI;
   }
 }
