@@ -3,6 +3,11 @@ require('dotenv').config();
 const express = require('express');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
+if (process.env.NODE_ENV === 'development') {
+  const cors = require('cors');
+  app.use(cors());
+}
+
 // Environment variables
 const uri = process.env.MONGODB_URI || "mongodb+srv://wokebloke:<password>@servingbeings.nni9vnv.mongodb.net/?retryWrites=true&w=majority";
 const port = process.env.PORT || 3000;
@@ -14,6 +19,7 @@ const client = new MongoClient(uri, {
 
 const app = express();
 app.use(express.json());
+app.use(express.static('front-end'));
 
 // Connect to MongoDB
 async function connectToMongoDB() {
