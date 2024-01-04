@@ -1,75 +1,88 @@
-// server.js
 require('dotenv').config();
 const express = require('express');
 const { MongoClient, ServerApiVersion } = require('mongodb');
-
-if (process.env.NODE_ENV === 'development') {
-  const cors = require('cors');
-  app.use(cors());
-}
-
-// Environment variables
-const uri = process.env.MONGODB_URI || "mongodb+srv://wokebloke:<password>@servingbeings.nni9vnv.mongodb.net/?retryWrites=true&w=majority";
-const port = process.env.PORT || 3000;
-
-// Create a new MongoClient
-const client = new MongoClient(uri, {
-  serverApi: ServerApiVersion.v1
-});
+const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 
 const app = express();
 app.use(express.json());
 app.use(express.static('front-end'));
 
-// Connect to MongoDB
-async function connectToMongoDB() {
+// Configure CORS for development environment
+if (process.env.NODE_ENV === 'development') {
+  const cors = require('cors');
+  app.use(cors());
+}
+
+// Function to access MongoDB URI from Secret Manager
+async function getMongoDBURI() {
+  if (process.env.NODE_ENV === 'production') {
+    const secretsClient = new SecretManagerServiceClient();
+    const [version] = await secretsClient.accessSecretVersion({
+      name: 'projects/882775215945/secrets/mongodb-uri/versions/latest',
+    });
+    return version.payload.data.toString('utf8');
+  } else {
+    // Fallback to .env file for development
+    return process.env.MONGODB_URI;
+  }
+}
+
+// Function to connect to MongoDB
+async function connectToMongoDB(uri) {
+  const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
   try {
     await client.connect();
     console.log("Successfully connected to MongoDB!");
+    return client;
   } catch (error) {
     console.error("Connection to MongoDB failed!", error);
     process.exit(1);
   }
 }
 
-// Add a recipe to the 'Recipes' collection
-app.post('/recipes', async (req, res) => {
-  try {
-    const recipesCollection = client.db("Meals").collection("Recipes");
-    const result = await recipesCollection.insertOne(req.body);
-    res.status(201).json(result);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// Initialize the MongoDB connection
+(async () => {
+  const uri = await getMongoDBURI();
+  const mongoClient = await connectToMongoDB(uri);
 
-app.post('/state', async (req, res) => {
-  try {
-    const stateCollection = client.db("Meals").collection("Beings");
-    const result = await stateCollection.insertOne(req.body);
-    res.status(201).json(result);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+  // Define your routes here, using `mongoClient`
+  // Example:
+  // Add a recipe to the 'Recipes' collection
+  app.post('/recipes', async (req, res) => {
+    try {
+      const recipesCollection = mongoClient.db("Meals").collection("Recipes");
+      const result = await recipesCollection.insertOne(req.body);
+      res.status(201).json(result);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   });
 
-// Retrieve all recipes from the 'Recipes' collection
-app.get('/recipes', async (req, res) => {
-  try {
-    const recipesCollection = client.db("Meals").collection("Recipes");
-    const recipes = await recipesCollection.find({}).toArray();
-    res.status(200).json(recipes);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+  // Add a state of being to the 'Beings' collection
+  app.post('/state', async (req, res) => {
+    try {
+      const stateCollection = client.db("Meals").collection("Beings");
+      const result = await stateCollection.insertOne(req.body);
+      res.status(201).json(result);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 
-// Start the server and connect to MongoDB
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-  connectToMongoDB();
-});
+  // Retrieve all recipes from the 'Recipes' collection
+  app.get('/recipes', async (req, res) => {
+    try {
+      const recipesCollection = client.db("Meals").collection("Recipes");
+      const recipes = await recipesCollection.find({}).toArray();
+      res.status(200).json(recipes);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Start the server
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+})();
