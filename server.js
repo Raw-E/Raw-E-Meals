@@ -37,6 +37,16 @@ app.post('/recipes', async (req, res) => {
   }
 });
 
+app.post('/state', async (req, res) => {
+  try {
+    const stateCollection = client.db("Meals").collection("Beings");
+    const result = await stateCollection.insertOne(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 app.get('/', (req, res) => {
     res.send('Hello World!');
   });

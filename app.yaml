@@ -1,2 +1,6 @@
 runtime: nodejs
-env: flex
+env: flex 
+handlers:
+- url: /.*
+  static_files: front-end/index.html
+  upload: front-end/index.html
