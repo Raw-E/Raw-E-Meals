@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(cors());
 }
 
-console.log("Are we here?")
+console.log("Checkpoint 1")
 
 // Function to access MongoDB URI from Secret Manager
 async function getMongoDBURI() {
@@ -25,9 +25,6 @@ async function getMongoDBURI() {
         name: 'projects/882775215945/secrets/mongodb-uri/versions/latest',
       });
       const mongoURI = version.payload.data.toString('utf8');
-      
-      // Log part of the URI for debugging (avoid logging the entire URI)
-      console.log("MongoDB URI (partial):", mongoURI.substring(0, 40) + '...');
 
       return mongoURI;
     } catch (error) {
@@ -56,8 +53,8 @@ async function connectToMongoDB(uri) {
 
 // Initialize the MongoDB connection
 (async () => {
+  console.log("Checkpoint 2")
   const uri = await getMongoDBURI();
-  console.log("The uri is: ", uri);
   const mongoClient = await connectToMongoDB(uri);
 
   // Define your routes here, using `mongoClient`
@@ -76,7 +73,7 @@ async function connectToMongoDB(uri) {
   // Add a state of being to the 'Beings' collection
   app.post('/state', async (req, res) => {
     try {
-      const stateCollection = client.db("Meals").collection("Beings");
+      const stateCollection = mongoClient.db("Meals").collection("Beings");
       const result = await stateCollection.insertOne(req.body);
       res.status(201).json(result);
     } catch (error) {
@@ -87,7 +84,7 @@ async function connectToMongoDB(uri) {
   // Retrieve all recipes from the 'Recipes' collection
   app.get('/recipes', async (req, res) => {
     try {
-      const recipesCollection = client.db("Meals").collection("Recipes");
+      const recipesCollection = mongoClient.db("Meals").collection("Recipes");
       const recipes = await recipesCollection.find({}).toArray();
       res.status(200).json(recipes);
     } catch (error) {
