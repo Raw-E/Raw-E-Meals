@@ -13,6 +13,8 @@ if (process.env.NODE_ENV === 'development') {
   app.use(cors());
 }
 
+console.log("Are we here?")
+
 // Function to access MongoDB URI from Secret Manager
 async function getMongoDBURI() {
   if (process.env.NODE_ENV === 'production') {
