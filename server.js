@@ -27,7 +27,7 @@ async function getMongoDBURI() {
       const mongoURI = version.payload.data.toString('utf8');
       
       // Log part of the URI for debugging (avoid logging the entire URI)
-      console.log("MongoDB URI (partial):", mongoURI.substring(0, 20) + '...');
+      console.log("MongoDB URI (partial):", mongoURI.substring(0, 40) + '...');
 
       return mongoURI;
     } catch (error) {
@@ -57,6 +57,7 @@ async function connectToMongoDB(uri) {
 // Initialize the MongoDB connection
 (async () => {
   const uri = await getMongoDBURI();
+  console.log("The uri is: ", uri);
   const mongoClient = await connectToMongoDB(uri);
 
   // Define your routes here, using `mongoClient`
