@@ -58,35 +58,19 @@ async function connectToMongoDB(uri) {
   const mongoClient = await connectToMongoDB(uri);
 
   // Define your routes here, using `mongoClient`
-  // Example:
-  // Add a recipe to the 'Recipes' collection
-  app.post('/recipes', async (req, res) => {
+  app.post('/rate-recipe', async (req, res) => {
     try {
-      const recipesCollection = mongoClient.db("Meals").collection("Recipes");
-      const result = await recipesCollection.insertOne(req.body);
-      res.status(201).json(result);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  });
-
-  // Add a state of being to the 'Beings' collection
-  app.post('/state', async (req, res) => {
-    try {
-      const stateCollection = mongoClient.db("Meals").collection("Beings");
-      const result = await stateCollection.insertOne(req.body);
-      res.status(201).json(result);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  });
-
-  // Retrieve all recipes from the 'Recipes' collection
-  app.get('/recipes', async (req, res) => {
-    try {
-      const recipesCollection = mongoClient.db("Meals").collection("Recipes");
-      const recipes = await recipesCollection.find({}).toArray();
-      res.status(200).json(recipes);
+      const recipesCollection = mongoClient.db("Meals").collection("Ratings");
+      const rating = req.body.rating; // Assuming 'rating' contains the rating
+      // Removed the line that gets recipeId from the request body
+      const recipeName = req.body.recipeName; // Add this line to get the recipe name from the request body
+  
+      // Insert the new recipe with the rating and name
+      const result = await recipesCollection.insertOne(
+        { name: recipeName, ratings: [rating] } // Changed from updateOne to insertOne
+      );
+  
+      res.status(200).json(result);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
