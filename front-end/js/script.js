@@ -1,6 +1,6 @@
 function submitRating() {
   var userInput = document.getElementById('stateInput').value;
-  var recipeName = "Coconut Brownies"
+  var recipeName = "Coconut Brownies V2"
   console.log("User's rating", userInput);
 
   // Send a POST request to the server
