@@ -76,6 +76,25 @@ async function connectToMongoDB(uri) {
     }
   });
 
+  app.post('/add-recipe', async (req, res) => {
+    try {
+      // Extract the properties from the request body
+      const { name, servings, ingredients, instructions, notes } = req.body;
+  
+      // Get the recipes collection from your MongoDB client
+      const recipesCollection = mongoClient.db("Meals").collection("Recipes");
+  
+      // Insert the new recipe into the collection
+      const result = await recipesCollection.insertOne({ name, servings, ingredients, instructions, notes });
+  
+      // Respond with a 201 status code for "Created" and the result
+      res.status(201).json(result);
+    } catch (error) {
+      // If something goes wrong, respond with a 500 status code and the error message
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Start the server
   const port = process.env.PORT || 3000;
   app.listen(port, () => {
