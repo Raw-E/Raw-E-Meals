@@ -5,7 +5,7 @@ const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 
 const app = express();
 app.use(express.json());
-app.use(express.static('front-end'));
+app.use(express.static('Front_End'));
 
 // Configure CORS for development environment
 if (process.env.NODE_ENV === 'development') {
