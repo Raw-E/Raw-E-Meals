@@ -11,7 +11,7 @@ body {
     /* background-image: url('../path-to-your-background-image.jpg'); */
   }
   
-  #rate-recipe-container {
+  #rate-recipe-container, #add-recipe-container {
     background-color: #ffffff;
     padding: 40px;
     border-radius: 15px;

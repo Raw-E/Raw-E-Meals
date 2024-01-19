@@ -79,13 +79,13 @@ async function connectToMongoDB(uri) {
   app.post('/add-recipe', async (req, res) => {
     try {
       // Extract the properties from the request body
-      const { name, servings, ingredients, instructions, notes } = req.body;
+      const { Name, Servings, Ingredients, Instructions, Notes } = req.body;
   
       // Get the recipes collection from your MongoDB client
       const recipesCollection = mongoClient.db("Meals").collection("Recipes");
   
       // Insert the new recipe into the collection
-      const result = await recipesCollection.insertOne({ name, servings, ingredients, instructions, notes });
+      const result = await recipesCollection.insertOne({ Name, Servings, Ingredients, Instructions, Notes });
   
       // Respond with a 201 status code for "Created" and the result
       res.status(201).json(result);
