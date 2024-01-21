@@ -83,14 +83,107 @@ async function connectToMongoDB(uri) {
   
       // Get the recipes collection from your MongoDB client
       const recipesCollection = mongoClient.db("Meals").collection("Recipes");
+
+      const lastModified = new Date();
   
       // Insert the new recipe into the collection
-      const result = await recipesCollection.insertOne({ Name, Servings, Ingredients, Instructions, Notes });
+      const result = await recipesCollection.insertOne({ Name, Servings, Ingredients, Instructions, Notes, lastModified });
   
       // Respond with a 201 status code for "Created" and the result
       res.status(201).json(result);
     } catch (error) {
       // If something goes wrong, respond with a 500 status code and the error message
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post('/track-state', async (req, res) => {
+    try {
+      const statesCollection = mongoClient.db("Beings").collection("States");
+      const username = req.body.username;
+      const state = req.body.state;
+  
+      // Get current date and time
+      const timestamp = new Date();
+  
+      // Insert the document with the timestamp
+      const result = await statesCollection.insertOne({ 
+        username: username, 
+        state: state, 
+        timestamp: timestamp // Adding the timestamp field
+      });
+  
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post('/track-meal', async (req, res) => {
+    try {
+      const mealsCollection = mongoClient.db("Beings").collection("Meals");
+      const username = req.body.username;
+      const meal = req.body.meal;
+      const timestamp = req.body.time;
+
+      console.log(meal)
+  
+      // Insert the document with the timestamp
+      const result = await mealsCollection.insertOne({ 
+        username: username, 
+        meal: meal, 
+        timestamp: timestamp // Adding the timestamp field
+      });
+  
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get('/get-recipes', async (req, res) => {
+    try {
+      const recipesCollection = mongoClient.db("Meals").collection("Recipes");
+      const recipes = await recipesCollection.aggregate([
+        {
+          $addFields: {
+            selectedForReview: { $ifNull: ["$selectedForReview", false] }
+          }
+        },
+        {
+          $sort: { lastModified: -1 }
+        }
+      ]).toArray();
+      res.status(200).json(recipes);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post('/select-for-review', async (req, res) => {
+    try {
+      const recipesCollection = mongoClient.db("Meals").collection("Recipes");
+      const recipeName = req.body.recipeName;
+      const result = await recipesCollection.updateOne(
+        { Name: recipeName },
+        { $set: { selectedForReview: true } }
+      );
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post('/deselect-for-review', async (req, res) => {
+    try {
+      const recipesCollection = mongoClient.db("Meals").collection("Recipes");
+      const recipeName = req.body.recipeName;
+      const result = await recipesCollection.updateOne(
+        { Name: recipeName },
+        { $set: { selectedForReview: false } }
+      );
+      res.status(200).json(result);
+    } catch (error) {
       res.status(500).json({ message: error.message });
     }
   });
