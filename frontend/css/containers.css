@@ -1,0 +1,32 @@
+#rate-recipe-container,
+#add-recipe-container,
+#track-state-container,
+#track-meal-container {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  position: absolute;
+}
+
+#rate-recipe-container {
+  top: 10%;
+  left: 10%;
+}
+
+#add-recipe-container {
+  top: 10%;
+  right: 10%;
+}
+
+#track-state-container {
+  top: 60%;
+  left: 5%;
+}
+
+#track-meal-container {
+  top: 50%;
+  right: 15%;
+}

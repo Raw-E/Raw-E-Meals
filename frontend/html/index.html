@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Meta tags for character set and responsive design -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Page title -->
+    <title>Evolver</title>
+
+    <!-- Link to the stylesheet -->
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/containers.css" />
+    <link rel="stylesheet" href="/css/recipe-container.css" />
+
+    <!-- Importing jQuery and jQuery UI libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+  </head>
+  <body>
+    <!-- Navigation bar -->
+    <div id="navbar">
+      <a href="index.html">Home</a>
+      <a href="manage-recipes.html"> Manage Recipes</a>
+    </div>
+
+    <!-- Container for rating recipes -->
+    <div id="rate-recipe-container">
+      <h1>Rate Recipe:</h1>
+      <div id="recipeNames"></div>
+    </div>
+
+    <!-- Container for adding recipes -->
+    <div id="add-recipe-container">
+      <h1>Add Recipe:</h1>
+      <textarea
+        id="recipeInput"
+        placeholder="Paste your recipe in JSON format here..."
+      ></textarea>
+      <button onclick="submitRecipe()">Submit</button>
+    </div>
+
+    <!-- Container for tracking state of being -->
+    <div id="track-state-container">
+      <h1>Track State of Being:</h1>
+      <input
+        type="text"
+        id="stateInput"
+        placeholder="Describe your average state of being since your last meal here!"
+      />
+      <button onclick="submitState()">Submit</button>
+    </div>
+
+    <!-- Container for tracking meals -->
+    <div id="track-meal-container">
+      <h1>Track Meal:</h1>
+      <input
+        type="text"
+        id="mealInput"
+        placeholder="Describe your last meal here!"
+      />
+      <input
+        type="time"
+        id="mealTimeInput"
+        placeholder="Specify the time of your meal"
+      />
+      <button onclick="submitMeal()">Submit</button>
+    </div>
+
+    <!-- Importing the main script file -->
+    <script type="module" src="../js/main.js"></script>
+
+    <!-- Inline script to make the containers draggable and resizable -->
+    <script>
+      $(function () {
+        $(
+          "#rate-recipe-container, #add-recipe-container, #track-state-container, #track-meal-container",
+        )
+          .draggable()
+          .resizable();
+      });
+    </script>
+  </body>
+</html>

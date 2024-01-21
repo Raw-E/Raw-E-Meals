@@ -4,7 +4,7 @@ env: flex
 # Automatic scaling is the default, but you can configure manual or basic scaling as needed.
 automatic_scaling:
   min_num_instances: 1
-  max_num_instances: 5  # Adjust based on your needs
+  max_num_instances: 5 # Adjust based on your needs
 
 # Environment variables: Define production environment variables here
 env_variables:
@@ -13,17 +13,16 @@ env_variables:
 
 # Handlers: Define URL handlers here
 handlers:
-  # Serve all static files in the 'front-end' folder
+  # Serve all static files in the 'front_end' folder
   - url: /(.*\.(gif|png|jpg|css|js|html|json))
-    static_files: front-end/\1
-    upload: front-end/(.*\.(gif|png|jpg|css|js|html|json))
+    static_files: frontend/html/\1
+    upload: frontend/html/(.*\.(gif|png|jpg|css|js|html|json))
 
   # Define a catch-all handler to serve index.html
   - url: /.*
-    static_files: front-end/index.html
-    upload: front-end/index.html
+    static_files: frontend/html/index.html
+    upload: frontend/html/index.html
 
 # Specify the entry point for your application
 entrypoint: npm start
-
 # [Optional] Include any other App Engine specific settings here (e.g., network settings, resource allocation)
