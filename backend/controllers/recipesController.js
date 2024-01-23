@@ -1,34 +1,57 @@
-// controllers/recipesController.js
-const rateRecipe = async (req, res) => {
+const { ObjectId } = require('mongodb');
+
+const addRecipeReview = async (req, res) => {
   try {
-    const recipesCollection = req.mongoClient.db("Meals").collection("Ratings");
-    const rating = req.body.rating;
-    const recipeName = req.body.recipeName;
+    console.log("addRecipeReview called with body:", req.body);
+    const reviewsCollection = req.mongoClient.db("Meals").collection("Reviews");
+    const recipesCollection = req.mongoClient.db("Meals").collection("Recipes");
+    const review = req.body.review;
+    const recipeId = req.body.recipeId;
 
-    const result = await recipesCollection.insertOne({
-      name: recipeName,
-      ratings: [rating],
-    });
+    if (!ObjectId.isValid(recipeId)) {
+      console.error("Invalid recipeId:", recipeId);
+      return res.status(400).json({ message: "Invalid recipeId" });
+    }
 
-    res.status(200).json(result);
+    console.log("Inserting review:", review);
+    const reviewResult = await reviewsCollection.insertOne({ review });
+    console.log("Review inserted with result:", reviewResult);
+
+    console.log(`Updating recipe with ID ${recipeId} to add review with ID ${reviewResult.insertedId}`);
+    const recipeResult = await recipesCollection.updateOne(
+      { _id: new ObjectId(recipeId) },
+      { $push: { reviewIds: reviewResult.insertedId } }
+    );
+    console.log('Update operation result:', recipeResult);
+
+    if (recipeResult.matchedCount === 0) {
+      console.error("No recipe found with ID:", recipeId);
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    res.status(200).json({ reviewResult, recipeResult });
   } catch (error) {
+    console.error("Error in addRecipeReview:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
+// Similar functions would be needed for addVersion, getReviews, and getVersions
+
 const addRecipe = async (req, res) => {
   try {
-    const { Name, Servings, Ingredients, Instructions, Notes } = req.body;
+    const { name, servings, ingredients, instructions, notes } = req.body;
     const recipesCollection = req.mongoClient.db("Meals").collection("Recipes");
     const lastModified = new Date();
 
     const result = await recipesCollection.insertOne({
-      Name,
-      Servings,
-      Ingredients,
-      Instructions,
-      Notes,
+      name,
+      servings,
+      ingredients,
+      instructions,
+      notes,
       lastModified,
+      reviewIds: [], // Initialize ReviewIDs as an empty array
     });
 
     res.status(201).json(result);
@@ -67,7 +90,7 @@ const selectForReview = async (req, res) => {
     const recipesCollection = req.mongoClient.db("Meals").collection("Recipes");
     const recipeName = req.body.recipeName;
     const result = await recipesCollection.updateOne(
-      { Name: recipeName },
+      { name: recipeName },
       { $set: { selectedForReview: true } },
     );
 
@@ -82,7 +105,7 @@ const deselectForReview = async (req, res) => {
     const recipesCollection = req.mongoClient.db("Meals").collection("Recipes");
     const recipeName = req.body.recipeName;
     const result = await recipesCollection.updateOne(
-      { Name: recipeName },
+      { name: recipeName },
       { $set: { selectedForReview: false } },
     );
 
@@ -95,7 +118,7 @@ const deselectForReview = async (req, res) => {
 console.log("recipesController loaded"); // Log when the file is loaded
 
 module.exports = {
-  rateRecipe,
+  addRecipeReview,
   addRecipe,
   getRecipes,
   selectForReview,

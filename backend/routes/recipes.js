@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const {
-  rateRecipe,
+  addRecipeReview,
   addRecipe,
   getRecipes,
   selectForReview,
@@ -26,8 +26,8 @@ module.exports = (mongoClient) => {
     res.status(500).send("Something broke!");
   });
 
-  // Route to rate a recipe
-  router.post("/rate-recipe", rateRecipe);
+  // Route to review a recipe
+  router.post("/add-recipe-review", addRecipeReview);
 
   // Route to add a new recipe
   router.post("/add-recipe", addRecipe);

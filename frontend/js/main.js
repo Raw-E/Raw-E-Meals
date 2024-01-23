@@ -4,14 +4,14 @@ import {
   parseMealTime,
 } from "./utilities/index.js";
 import {
-  submitRating,
   submitRecipe,
   submitState,
   submitMeal,
+  submitRecipeReview,
 } from "./actions/index.js";
-import { createRecipeContainer, loadRecipesForReview } from "./views/index.js";
+import { recipeIds, createRecipeContainer, loadRecipesForReview } from "./views/index.js";
 
-window.submitRating = submitRating;
+window.submitRecipeReview = submitRecipeReview;
 window.submitRecipe = submitRecipe;
 window.submitState = submitState;
 window.submitMeal = submitMeal;

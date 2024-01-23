@@ -1,13 +1,14 @@
-import submitRating from "../actions/submit-rating.js";
+import submitRecipeReview from "../actions/submit-recipe-review.js";
 
 // This function creates and returns a div element containing the recipe details and a form for submitting a rating
 function createRecipeContainer(recipe) {
+
   // Creating a new div element for the recipe container
   const recipeContainer = document.createElement("div");
 
   // Creating a new h5 element for the recipe name
   const header = document.createElement("h5");
-  header.textContent = recipe.Name;
+  header.textContent = recipe.name;
 
   // Creating a new input element for the rating
   const input = document.createElement("input");
@@ -20,7 +21,7 @@ function createRecipeContainer(recipe) {
   button.textContent = "Submit Rating";
   button.style.fontSize = "0.8em";
   button.onclick = function () {
-    submitRating(recipe.Name, input.value);
+    submitRecipeReview(recipe._id, recipe.name, input.value);
   };
 
   // Appending the header, input, and button elements to the recipe container

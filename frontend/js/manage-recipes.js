@@ -1,6 +1,7 @@
 // Fetch all recipes from the server
 console.log("here 1");
 
+
 fetch("/recipes/get-recipes", {
   method: "GET",
   headers: {
@@ -30,8 +31,9 @@ fetch("/recipes/get-recipes", {
       // Iterate over each recipe
       data.forEach((recipe) => {
         // Create a new list item for each recipe
+        
         const listItem = document.createElement("li");
-        listItem.textContent = recipe.Name;
+        listItem.textContent = recipe.name;
         listItem.style.cursor = "pointer";
 
         // Add a click event listener to each list item
@@ -41,11 +43,11 @@ fetch("/recipes/get-recipes", {
           // If the recipe is selected, change the background color and call the select endpoint
           if (this.classList.contains("selected")) {
             this.style.backgroundColor = "green";
-            selectOrDeselectRecipe("/recipes/select-for-review", recipe.Name);
+            selectOrDeselectRecipe("/recipes/select-for-review", recipe.name);
           } else {
             // If the recipe is deselected, reset the background color and call the deselect endpoint
             this.style.backgroundColor = "";
-            selectOrDeselectRecipe("/recipes/deselect-for-review", recipe.Name);
+            selectOrDeselectRecipe("/recipes/deselect-for-review", recipe.name);
           }
         });
 

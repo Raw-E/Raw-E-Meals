@@ -2,12 +2,12 @@
 const trackState = async (req, res) => {
   try {
     const statesCollection = req.mongoClient.db("Beings").collection("States");
-    const username = req.body.username;
+    const userID = "65aeb48d320533065633b52b";
     const state = req.body.state;
     const timestamp = new Date();
 
     const result = await statesCollection.insertOne({
-      username,
+      userID,
       state,
       timestamp,
     });
@@ -21,12 +21,12 @@ const trackState = async (req, res) => {
 const trackMeal = async (req, res) => {
   try {
     const mealsCollection = req.mongoClient.db("Beings").collection("Meals");
-    const username = req.body.username;
+    const userID = "65aeb48d320533065633b52b";
     const meal = req.body.meal;
     const timestamp = req.body.time;
 
     const result = await mealsCollection.insertOne({
-      username,
+      userID,
       meal,
       timestamp,
     });

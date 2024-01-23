@@ -1,5 +1,7 @@
 import createRecipeContainer from "./create-recipe-container.js";
 
+export let recipeIds = [];
+
 // This function loads the recipes for review from the server
 function loadRecipesForReview() {
   // Fetching the recipes from the server
@@ -32,6 +34,11 @@ function loadRecipesForReview() {
           const recipeContainer = createRecipeContainer(recipe);
           // Appending the recipe container to the recipe names container
           recipeNamesContainer.appendChild(recipeContainer);
+
+          // Accessing the _id of the recipe
+          const id = recipe._id;
+          // Push the id into the recipeIds array
+          recipeIds.push(id);
         }
       });
     })
